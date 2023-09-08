@@ -5,6 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 public class Monkey : Entity
 {
+    private const string DyingTrigger = "IsDying";
     private float _timeBeforeDestroy = 2;
 
     public event Action<Monkey> Dying;
@@ -28,7 +29,7 @@ public class Monkey : Entity
 
     private IEnumerator Die()
     {
-        Animator.SetBool("IsDying", true);
+        Animator.SetBool(DyingTrigger, true);
 
         yield return new WaitForSeconds(_timeBeforeDestroy);
 

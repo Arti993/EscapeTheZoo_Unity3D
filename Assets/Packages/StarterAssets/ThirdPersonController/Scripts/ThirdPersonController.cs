@@ -117,6 +117,7 @@ namespace StarterAssets
 
         private const float _threshold = 0.01f;
 
+        private float _turtleReboundMultiplier = 1.8f;
         private bool _hasAnimator;
         private bool _isMovementActive;
 
@@ -532,7 +533,7 @@ namespace StarterAssets
 
         private void ReboundOnTurtle()
         {
-            _verticalVelocity = 1.8f * Mathf.Sqrt(JumpHeight * -2f * Gravity);
+            _verticalVelocity = _turtleReboundMultiplier * Mathf.Sqrt(JumpHeight * -2f * Gravity);
 
             if (_hasAnimator)
             {

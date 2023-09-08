@@ -2,61 +2,65 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using StarterAssets;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
+
 
 public class ShooterController : MonoBehaviour
 {
     [SerializeField] private List<Wave> _waves;
     [SerializeField] private Transform[] _spawnPoints;
-    [SerializeField] private Player _player;
-    [SerializeField] private ObjectPool _playerProjectilesPool;
     [SerializeField] private Key _keyTemplate;
-    [SerializeField] private BossHealthBar _bossHealthbar;
-    [SerializeField] private PlayerHealthBar _playerHealthbar;
-    [SerializeField] private Button _shootButton;
-    [SerializeField] private TMP_Text _nextWaveText;
-    [SerializeField] private AudioSource _bossTheme;
+    [SerializeField] private ShooterUI _shooterUI;
 
-    private List<Monkey> _aliveMonkeys;
+    private List<Monkey> _aliveMonkeys = new List<Monkey>();
     private Wave _currentWave;
     private int _currentWaveNumber = 0;
     private float _pauseTimeBetweenWaves = 4;
 
-    public event Action<int, int> EnemyCountChanged;
-
-    public void StartWork()
-    {
-        _playerHealthbar.gameObject.SetActive(true);
-
-        _shootButton.gameObject.SetActive(true);
-
-        _playerProjectilesPool.gameObject.SetActive(true);
-
-        _aliveMonkeys = new List<Monkey>();
-
-        SetWave(_currentWaveNumber);
-
-        EnemyCountChanged?.Invoke(0, 1);
-    }
-
-    public void NextWave()
-    {
-        SetWave(++_currentWaveNumber);
-    }
+    public event Action ShooterStarted;
+    public event Action<float> WaveEnded;
+    public event Action<Monkey> BossSpawned;
+    public event Action BossDefeated;
+    public event Action ShooterRestarted;
+    public event Action ShooterFinished;
 
     private void OnEnable()
     {
-        _player.Dying += OnPlayerDying;
+        SetWave(_currentWaveNumber);
+
+        Player.Instance.Dying += OnPlayerDying;
+    }
+
+    private void Start()
+    {
+        ShooterStarted?.Invoke();
     }
 
     private void OnDisable()
     {
-        _player.Dying -= OnPlayerDying;
+        Player.Instance.Dying -= OnPlayerDying;
+    }
 
-        if (_playerProjectilesPool != null)
-            _playerProjectilesPool.gameObject.SetActive(false);
+    private void NextWave()
+    {
+        SetWave(++_currentWaveNumber);
+    }
+
+    private void SetWave(int index)
+    {
+        _currentWave = _waves[index];
+        SpawnCurrentWave();
+    }
+
+    private void SpawnCurrentWave()
+    {
+        int spawnPointIndex;
+
+        for (int i = 0; i < _currentWave.MonkeysCount; i++)
+        {
+            spawnPointIndex = i;
+            InstantiateMonkey(spawnPointIndex);
+        }
     }
 
     private void InstantiateMonkey(int index)
@@ -69,34 +73,7 @@ public class ShooterController : MonoBehaviour
         monkey.Dying += OnMonkeyDying;
 
         if (monkey.gameObject.TryGetComponent(out Boss boss))
-        {
-            _bossHealthbar.gameObject.SetActive(true);
-
-            _bossHealthbar.BindToBoss(monkey);
-
-            LevelsChanger.Instance.CurrentLevel.StopPlayMusic();
-
-            _bossTheme.Play();
-        }
-    }
-
-    private void SpawnCurrentWave()
-    {
-        int spawnPointIndex;
-
-        for (int i = 0; i < _currentWave.MonkeysCount; i++)
-        {
-            spawnPointIndex = i;
-            InstantiateMonkey(spawnPointIndex);
-
-            EnemyCountChanged?.Invoke(_aliveMonkeys.Count, _currentWave.MonkeysCount);
-        }
-    }
-
-    private void SetWave(int index)
-    {
-        _currentWave = _waves[index];
-        SpawnCurrentWave();
+            BossSpawned?.Invoke(monkey);
     }
 
     private void OnMonkeyDying(Monkey monkey)
@@ -108,27 +85,19 @@ public class ShooterController : MonoBehaviour
         {
             if (_currentWaveNumber < _waves.Count - 1)
             {
-                StartCoroutine(WaitBeforeNextWave(_pauseTimeBetweenWaves));
+                StartCoroutine(WaitBeforeNextWave());
+
+                WaveEnded?.Invoke(_pauseTimeBetweenWaves);
             }
             else
             {
                 if (monkey.gameObject.TryGetComponent(out Boss boss))
-                {
-                    _bossHealthbar.gameObject.SetActive(false);
-
-                    _bossTheme.Stop();
-
-                    LevelsChanger.Instance.CurrentLevel.StartPlayMusic();
-                }
-
-                ThirdPersonController.Instance.DisableShooting();
-
-                _playerHealthbar.gameObject.SetActive(false);
-
-                _shootButton.gameObject.SetActive(false);
+                    BossDefeated?.Invoke();
 
                 Instantiate(_keyTemplate, monkey.transform.position, Quaternion.identity,
                     LevelsChanger.Instance.CurrentLevel.transform);
+
+                ShooterFinished?.Invoke();
 
                 this.gameObject.SetActive(false);
             }
@@ -137,23 +106,21 @@ public class ShooterController : MonoBehaviour
 
     private void OnPlayerDying()
     {
-        StartCoroutine(WaitBeforeRestart(_pauseTimeBetweenWaves));
+        StartCoroutine(WaitBeforeRestart());
     }
 
-    private IEnumerator WaitBeforeNextWave(float duration)
+    private IEnumerator WaitBeforeNextWave()
     {
-        _nextWaveText.gameObject.SetActive(true);
-
-        yield return new WaitForSeconds(duration);
-
-        _nextWaveText.gameObject.SetActive(false);
+        yield return new WaitForSeconds(_pauseTimeBetweenWaves);
 
         NextWave();
     }
 
-    private IEnumerator WaitBeforeRestart(float duration)
+    private IEnumerator WaitBeforeRestart()
     {
-        yield return new WaitForSeconds(duration);
+        yield return new WaitForSeconds(_pauseTimeBetweenWaves);
+
+        ShooterRestarted?.Invoke();
 
         foreach (var monkey in _aliveMonkeys)
             Destroy(monkey.gameObject);
@@ -162,17 +129,9 @@ public class ShooterController : MonoBehaviour
 
         _currentWaveNumber = 0;
 
-        if (_bossTheme.isPlaying)
-        {
-            _bossTheme.Stop();
-
-            LevelsChanger.Instance.CurrentLevel.StartPlayMusic();
-        }
-
         SetWave(_currentWaveNumber);
     }
 }
-
 
 [System.Serializable]
 public class Wave

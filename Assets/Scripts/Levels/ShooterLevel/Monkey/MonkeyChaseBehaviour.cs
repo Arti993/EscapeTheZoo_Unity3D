@@ -6,9 +6,9 @@ public class MonkeyChaseBehaviour : StateMachineBehaviour
     public const string AttackStateTrigger = "IsAttacking";
 
     private NavMeshAgent _agent;
-    private float _attackRange = 10;
-    private float _distance;
-
+    private float _minAttackRange = 10;
+    private MonkeyRaycast _monkeyRaycast = new MonkeyRaycast();
+ 
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         if (animator.TryGetComponent(out NavMeshAgent agent))
@@ -17,20 +17,11 @@ public class MonkeyChaseBehaviour : StateMachineBehaviour
 
     public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        _distance = Vector3.Distance(_agent.transform.position, Player.Instance.transform.position);
-
         _agent.SetDestination(Player.Instance.transform.position);
 
-        if (_distance < _attackRange)
+        if (DistanceMeterToPlayer.GetDistance(animator.gameObject) < _minAttackRange)
         {
-            animator.gameObject.transform.LookAt(Player.Instance.gameObject.transform);
-
-            Vector3 raycastDirection = animator.transform.forward;
-            Vector3 auxiliaryPoint = animator.transform.position + raycastDirection * 0.5f;
-            Vector3 raycastStartPoint = new Vector3(auxiliaryPoint.x, auxiliaryPoint.y + 0.6f, auxiliaryPoint.z);
-
-            RaycastHit hit;
-            bool isHit = Physics.Raycast(raycastStartPoint, raycastDirection, out hit, 20);
+            bool isHit = _monkeyRaycast.TryGetHit(animator.gameObject, out RaycastHit hit);
 
             if (isHit)
             {

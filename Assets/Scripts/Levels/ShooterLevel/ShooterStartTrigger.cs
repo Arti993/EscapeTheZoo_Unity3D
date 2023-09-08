@@ -9,9 +9,9 @@ public class ShooterStartTrigger : MonoBehaviour
     {
         if (other.gameObject.TryGetComponent(out ThirdPersonController controller))
         {
-            controller.EnableShooting();
+            ThirdPersonController.Instance.EnableShooting();
 
-            _shooterController.StartWork();
+            _shooterController.gameObject.SetActive(true);
 
             this.gameObject.SetActive(false);
         }
