@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,24 +9,24 @@ public class ShooterUI : MonoBehaviour
     [SerializeField] private PlayerHealthBar _playerHealthbar;
     [SerializeField] private Button _shootButton;
     [SerializeField] private TMP_Text _nextWaveText;
-    [SerializeField] private ShooterController _shooterController;
+    [SerializeField] private ShooterWavesController _shooterController;
 
     private void OnEnable()
     {
-        _shooterController.ShooterStarted += OnShooterStarted;
+        _shooterController.WavesStarted += OnWavesStarted;
     }
 
-    private void OnShooterStarted()
+    private void OnWavesStarted()
     {
         EnablePlayerHealthBar();
         EnableShootButton();
 
-        _shooterController.WaveEnded += OnWaveEnded;
+        _shooterController.CurrentWaveFinished += OnCurrentWaveFinished;
         _shooterController.BossSpawned += OnBossSpawned;
-        _shooterController.ShooterFinished += OnShooterFinished;
+        _shooterController.WavesFinished += OnWavesFinished;
     }
 
-    private void OnWaveEnded(float duration)
+    private void OnCurrentWaveFinished(float duration)
     {
         StartCoroutine(ShowNextWaveMessage(duration));
     }
@@ -45,15 +43,15 @@ public class ShooterUI : MonoBehaviour
         DisableBossHealthBar();
     }
 
-    private void OnShooterFinished()
+    private void OnWavesFinished()
     {
         DisablePlayerHealthBar();
         DisableShootButton();
 
-        _shooterController.ShooterStarted -= OnShooterStarted;
+        _shooterController.WavesStarted -= OnWavesStarted;
         _shooterController.BossSpawned -= OnBossSpawned;
         _shooterController.BossDefeated -= OnBossDefeated;
-        _shooterController.ShooterFinished -= OnShooterFinished;
+        _shooterController.WavesFinished -= OnWavesFinished;
     }
 
     private void EnablePlayerHealthBar()

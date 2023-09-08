@@ -1,17 +1,17 @@
 using UnityEngine;
 
-[RequireComponent(typeof(ShooterController))]
+[RequireComponent(typeof(ShooterWavesController))]
 public class ShooterMusicController : MonoBehaviour
 {
     [SerializeField] private AudioSource _bossTheme;
 
-    private ShooterController _shooterController;
+    private ShooterWavesController _shooterWavesController;
 
     private void OnEnable()
     {
-        _shooterController = GetComponent<ShooterController>();
-        _shooterController.BossSpawned += OnBossSpawned;
-        _shooterController.ShooterRestarted += OnShooterRestarted;
+        _shooterWavesController = GetComponent<ShooterWavesController>();
+        _shooterWavesController.BossSpawned += OnBossSpawned;
+        _shooterWavesController.WavesRestarted += OnWavesRestarted;
     }
 
     private void OnBossSpawned(Monkey boss)
@@ -20,7 +20,7 @@ public class ShooterMusicController : MonoBehaviour
 
         _bossTheme.Play();
 
-        _shooterController.BossDefeated += OnBossDefeated;
+        _shooterWavesController.BossDefeated += OnBossDefeated;
     }
 
     private void OnBossDefeated()
@@ -29,12 +29,12 @@ public class ShooterMusicController : MonoBehaviour
 
         LevelsChanger.Instance.CurrentLevel.StartPlayMusic();
 
-        _shooterController.BossSpawned -= OnBossSpawned;
-        _shooterController.BossDefeated -= OnBossDefeated;
-        _shooterController.ShooterRestarted -= OnShooterRestarted;
+        _shooterWavesController.BossSpawned -= OnBossSpawned;
+        _shooterWavesController.BossDefeated -= OnBossDefeated;
+        _shooterWavesController.WavesRestarted -= OnWavesRestarted;
     }
 
-    private void OnShooterRestarted()
+    private void OnWavesRestarted()
     {
         if (_bossTheme.isPlaying)
         {

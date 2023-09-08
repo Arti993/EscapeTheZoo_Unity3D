@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using StarterAssets;
 using UnityEngine;
@@ -7,7 +6,7 @@ using UnityEngine.Events;
 public class PlayerThrowAttackController : MonoBehaviour
 {
     [SerializeField] private ObjectPool _playerProjectilesPool;
-    [SerializeField] private ShooterController _shooterController;
+    [SerializeField] private ShooterWavesController _shooterWavesController;
     [SerializeField] private AudioSource _throwSound;
 
     private bool _isAttacking = false;
@@ -31,23 +30,23 @@ public class PlayerThrowAttackController : MonoBehaviour
 
     private void OnEnable()
     {
-        _shooterController.ShooterStarted += OnShooterStarted;
+        _shooterWavesController.WavesStarted += OnWavesStarted;
     }
 
-    private void OnShooterStarted()
+    private void OnWavesStarted()
     {
         _playerProjectilesPool.gameObject.SetActive(true);
 
-        _shooterController.ShooterFinished += OnShooterFinished;
+        _shooterWavesController.WavesFinished += OnWavesFinished;
     }
 
-    private void OnShooterFinished()
+    private void OnWavesFinished()
     {
         if (_playerProjectilesPool != null)
             _playerProjectilesPool.gameObject.SetActive(false);
 
-        _shooterController.ShooterStarted -= OnShooterStarted;
-        _shooterController.ShooterFinished -= OnShooterFinished;
+        _shooterWavesController.WavesStarted -= OnWavesStarted;
+        _shooterWavesController.WavesFinished -= OnWavesFinished;
 
         ThirdPersonController.Instance.DisableShooting();
     }

@@ -1,28 +1,26 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using StarterAssets;
 using UnityEngine;
 
 
-public class ShooterController : MonoBehaviour
+public class ShooterWavesController : MonoBehaviour
 {
     [SerializeField] private List<Wave> _waves;
     [SerializeField] private Transform[] _spawnPoints;
     [SerializeField] private Key _keyTemplate;
-    [SerializeField] private ShooterUI _shooterUI;
 
     private List<Monkey> _aliveMonkeys = new List<Monkey>();
     private Wave _currentWave;
     private int _currentWaveNumber = 0;
     private float _pauseTimeBetweenWaves = 4;
 
-    public event Action ShooterStarted;
-    public event Action<float> WaveEnded;
+    public event Action WavesStarted;
+    public event Action<float> CurrentWaveFinished;
     public event Action<Monkey> BossSpawned;
     public event Action BossDefeated;
-    public event Action ShooterRestarted;
-    public event Action ShooterFinished;
+    public event Action WavesRestarted;
+    public event Action WavesFinished;
 
     private void OnEnable()
     {
@@ -33,7 +31,7 @@ public class ShooterController : MonoBehaviour
 
     private void Start()
     {
-        ShooterStarted?.Invoke();
+        WavesStarted?.Invoke();
     }
 
     private void OnDisable()
@@ -87,7 +85,7 @@ public class ShooterController : MonoBehaviour
             {
                 StartCoroutine(WaitBeforeNextWave());
 
-                WaveEnded?.Invoke(_pauseTimeBetweenWaves);
+                CurrentWaveFinished?.Invoke(_pauseTimeBetweenWaves);
             }
             else
             {
@@ -97,7 +95,7 @@ public class ShooterController : MonoBehaviour
                 Instantiate(_keyTemplate, monkey.transform.position, Quaternion.identity,
                     LevelsChanger.Instance.CurrentLevel.transform);
 
-                ShooterFinished?.Invoke();
+                WavesFinished?.Invoke();
 
                 this.gameObject.SetActive(false);
             }
@@ -120,7 +118,7 @@ public class ShooterController : MonoBehaviour
     {
         yield return new WaitForSeconds(_pauseTimeBetweenWaves);
 
-        ShooterRestarted?.Invoke();
+        WavesRestarted?.Invoke();
 
         foreach (var monkey in _aliveMonkeys)
             Destroy(monkey.gameObject);
