@@ -11,8 +11,8 @@ using UnityEngine.InputSystem;
 namespace StarterAssets
 {
     [RequireComponent(typeof(CharacterController))]
-    [RequireComponent(typeof(PlayerPickUpOrDropController))]
-    [RequireComponent(typeof(PlayerThrowAttackController))]
+    [RequireComponent(typeof(PlayerPickUpOrDrop))]
+    [RequireComponent(typeof(PlayerThrowAttack))]
 #if ENABLE_INPUT_SYSTEM 
     [RequireComponent(typeof(PlayerInput))]
 #endif
@@ -112,8 +112,8 @@ namespace StarterAssets
         private CharacterController _characterController;
         private StarterAssetsInputs _input;
         private GameObject _mainCamera;
-        private PlayerPickUpOrDropController _pickUpOrDropController;
-        private PlayerThrowAttackController _throwAttackController;
+        private PlayerPickUpOrDrop _playerPickUpOrDrop;
+        private PlayerThrowAttack _playerThrowAttack;
 
         private const float _threshold = 0.01f;
 
@@ -135,9 +135,9 @@ namespace StarterAssets
 
         public static ThirdPersonController Instance;
 
-        public bool IsShootingEnable => _throwAttackController.enabled;
+        public bool IsShootingEnable => _playerThrowAttack.enabled;
 
-        public bool IsPickUpOrDropEnable => _pickUpOrDropController.enabled;
+        public bool IsPickUpOrDropEnable => _playerPickUpOrDrop.enabled;
 
         public bool IsPlayerHitByShark { get; private set; } = false;
 
@@ -168,24 +168,24 @@ namespace StarterAssets
 
         public void EnableShooting()
         {
-            _throwAttackController.enabled = true;
+            _playerThrowAttack.enabled = true;
         }
 
         public void DisableShooting()
         {
-            _throwAttackController.enabled = false;
+            _playerThrowAttack.enabled = false;
         }
 
         public void EnablePickUpOrDrop()
         {
-            _pickUpOrDropController.enabled = true;
-            _pickUpOrDropController.EnablePickUpOrDropButton();
+            _playerPickUpOrDrop.enabled = true;
+            _playerPickUpOrDrop.EnablePickUpOrDropButton();
         }
 
         public void DisablePickUpOrDrop()
         {
-            _pickUpOrDropController.enabled = false;
-            _pickUpOrDropController.DisablePickUpOrDropButton();
+            _playerPickUpOrDrop.enabled = false;
+            _playerPickUpOrDrop.DisablePickUpOrDropButton();
         }
 
         public void DrownInWater()
@@ -238,8 +238,8 @@ namespace StarterAssets
                 _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
             }
 
-            _pickUpOrDropController = GetComponent<PlayerPickUpOrDropController>();
-            _throwAttackController = GetComponent<PlayerThrowAttackController>();
+            _playerPickUpOrDrop = GetComponent<PlayerPickUpOrDrop>();
+            _playerThrowAttack = GetComponent<PlayerThrowAttack>();
 
             DisablePickUpOrDrop();
             DisableShooting();
@@ -255,9 +255,9 @@ namespace StarterAssets
 
             LevelsChanger.Instance.CurrentLevel.AllActionsFinished += OnCurrentLevelAllActionsFinished;
             LevelsChanger.Instance.CurrentLevel.Restarted += OnCurrentLevelRestarted;
-            _pickUpOrDropController.ItemTaken += OnPickUp;
-            _pickUpOrDropController.ItemDropped += OnDrop;
-            _throwAttackController.Attacked += OnAttack;
+            _playerPickUpOrDrop.ItemTaken += OnPickUp;
+            _playerPickUpOrDrop.ItemDropped += OnDrop;
+            _playerThrowAttack.Attacked += OnAttack;
             _player.Dying += OnDying;
 
 
@@ -277,9 +277,9 @@ namespace StarterAssets
         {
             LevelsChanger.Instance.CurrentLevel.AllActionsFinished -= OnCurrentLevelAllActionsFinished;
             LevelsChanger.Instance.CurrentLevel.Restarted -= OnCurrentLevelRestarted;
-            _pickUpOrDropController.ItemTaken -= OnPickUp;
-            _pickUpOrDropController.ItemDropped -= OnDrop;
-            _throwAttackController.Attacked -= OnAttack;
+            _playerPickUpOrDrop.ItemTaken -= OnPickUp;
+            _playerPickUpOrDrop.ItemDropped -= OnDrop;
+            _playerThrowAttack.Attacked -= OnAttack;
             _player.Dying -= OnDying;
         }
 
@@ -487,7 +487,7 @@ namespace StarterAssets
 
         private void OnAttack()
         {
-            if(_throwAttackController.enabled == true)
+            if(_playerThrowAttack.enabled == true)
             {
                     if (_hasAnimator)
                     {

@@ -3,7 +3,7 @@ using StarterAssets;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class PlayerThrowAttackController : MonoBehaviour
+public class PlayerThrowAttack : MonoBehaviour
 {
     [SerializeField] private ObjectPool _playerProjectilesPool;
     [SerializeField] private MonkeyWavesSpawner _monkeyWavesSpawner;

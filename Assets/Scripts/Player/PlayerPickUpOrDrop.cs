@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(PlayerInput))]
-public class PlayerPickUpOrDropController : MonoBehaviour
+public class PlayerPickUpOrDrop : MonoBehaviour
 {
     [SerializeField] private Button _PickUpOrDropButton;
     [SerializeField] private AudioSource _PickUpSound;
