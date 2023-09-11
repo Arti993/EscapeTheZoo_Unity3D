@@ -16,13 +16,6 @@ public class PickableObject : MonoBehaviour
         LevelsChanger.Instance.CurrentLevel.AllActionsFinished += OnLevelConfirmed;
     }
 
-    private void OnLevelConfirmed()
-    {
-        LevelsChanger.Instance.CurrentLevel.AllActionsFinished -= OnLevelConfirmed;
-
-        Destroy(gameObject);
-    }
-
     private void OnCollisionEnter(Collision collision)
     {
         var levelBorders = collision.gameObject.GetComponentInParent<LevelBorders>();
@@ -40,5 +33,12 @@ public class PickableObject : MonoBehaviour
 
         if (isNeedToPlayFallSound)
             _fallSound.Play();
+    }
+
+    private void OnLevelConfirmed()
+    {
+        LevelsChanger.Instance.CurrentLevel.AllActionsFinished -= OnLevelConfirmed;
+
+        Destroy(gameObject);
     }
 }

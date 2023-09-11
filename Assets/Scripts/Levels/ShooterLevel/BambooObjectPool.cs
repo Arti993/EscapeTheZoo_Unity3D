@@ -8,6 +8,11 @@ public class BambooObjectPool : ObjectPool
     private Coroutine _pauseBetweenThrowsCoroutine;
     private float _pauseTimeBetweenThrows = 0.2f;
 
+    private void OnEnable()
+    {
+        Initialize(_bambooTemplate);
+    }
+
     public bool TryGetBamboo()
     {
         bool isSuccesfull = false;
@@ -20,11 +25,6 @@ public class BambooObjectPool : ObjectPool
         }
 
         return isSuccesfull;
-    }
-
-    private void OnEnable()
-    {
-        Initialize(_bambooTemplate);
     }
 
     private void SetBamboo(GameObject bambooStick)

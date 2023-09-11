@@ -3,8 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-public class ShooterWavesController : MonoBehaviour
+public class MonkeyWavesSpawner : MonoBehaviour
 {
     [SerializeField] private List<Wave> _waves;
     [SerializeField] private Transform[] _spawnPoints;
@@ -29,14 +28,14 @@ public class ShooterWavesController : MonoBehaviour
         Player.Instance.Dying += OnPlayerDying;
     }
 
-    private void Start()
-    {
-        WavesStarted?.Invoke();
-    }
-
     private void OnDisable()
     {
         Player.Instance.Dying -= OnPlayerDying;
+    }
+
+    private void Start()
+    {
+        WavesStarted?.Invoke();
     }
 
     private void NextWave()
@@ -104,7 +103,7 @@ public class ShooterWavesController : MonoBehaviour
 
     private void OnPlayerDying()
     {
-        StartCoroutine(WaitBeforeRestart());
+        StartCoroutine(WaitBeforeRestartWaves());
     }
 
     private IEnumerator WaitBeforeNextWave()
@@ -114,7 +113,7 @@ public class ShooterWavesController : MonoBehaviour
         NextWave();
     }
 
-    private IEnumerator WaitBeforeRestart()
+    private IEnumerator WaitBeforeRestartWaves()
     {
         yield return new WaitForSeconds(_pauseTimeBetweenWaves);
 

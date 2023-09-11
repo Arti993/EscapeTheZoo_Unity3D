@@ -3,7 +3,7 @@ using StarterAssets;
 
 public class ShooterStartTrigger : MonoBehaviour
 {
-    [SerializeField] private ShooterWavesController _shooterWavesController;
+    [SerializeField] private MonkeyWavesSpawner _monkeyWavesSpawner;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -11,7 +11,7 @@ public class ShooterStartTrigger : MonoBehaviour
         {
             ThirdPersonController.Instance.EnableShooting();
 
-            _shooterWavesController.gameObject.SetActive(true);
+            _monkeyWavesSpawner.gameObject.SetActive(true);
 
             this.gameObject.SetActive(false);
         }

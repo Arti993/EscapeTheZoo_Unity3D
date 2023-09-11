@@ -19,6 +19,13 @@ public abstract class Entity : MonoBehaviour
 
     public event Action<float, float> HealthChanged;
 
+    protected virtual void Awake()
+    {
+        Animator = GetComponent<Animator>();
+
+        _currentHealth = _health;
+    }
+
     public virtual void TakeDamage(float damage)
     {
         if (_currentHealth > 0)
@@ -36,13 +43,6 @@ public abstract class Entity : MonoBehaviour
         _currentHealth = _health;
 
         HealthChanged?.Invoke(_currentHealth, _health);
-    }
-
-    protected virtual void Awake()
-    {
-        Animator = GetComponent<Animator>();
-
-        _currentHealth = _health;
     }
 
     private IEnumerator OnHurt()

@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using StarterAssets;
-using UnityEngine.InputSystem.UI;
 
 public class PauseScreen : MonoBehaviour
 {
@@ -12,6 +11,19 @@ public class PauseScreen : MonoBehaviour
     [SerializeField] private Canvas _UIControls;
 
     private int _mainMenuSceneNumber = 0;
+
+    private void OnEnable()
+    {
+        _continueButton.onClick.AddListener(OnContinueButtonClick);
+        _mainMenuButton.onClick.AddListener(OnMainMenuButtonClick);
+
+    }
+
+    private void OnDisable()
+    {
+        _continueButton.onClick.RemoveListener(OnContinueButtonClick);
+        _mainMenuButton.onClick.RemoveListener(OnMainMenuButtonClick);
+    }
 
     public void Pause()
     {
@@ -24,19 +36,6 @@ public class PauseScreen : MonoBehaviour
         _UIControls.gameObject.SetActive(false);
 
         Time.timeScale = 0;
-    }
-
-    private void OnEnable()
-    {
-        _continueButton.onClick.AddListener(OnContinueButtonClick);
-        _mainMenuButton.onClick.AddListener(OnMainMenuButtonClick);
-        
-    }
-
-    private void OnDisable()
-    {
-        _continueButton.onClick.RemoveListener(OnContinueButtonClick);
-        _mainMenuButton.onClick.RemoveListener(OnMainMenuButtonClick);      
     }
 
     private void OnContinueButtonClick()

@@ -6,13 +6,18 @@ using UnityEngine.Events;
 public class PlayerThrowAttackController : MonoBehaviour
 {
     [SerializeField] private ObjectPool _playerProjectilesPool;
-    [SerializeField] private ShooterWavesController _shooterWavesController;
+    [SerializeField] private MonkeyWavesSpawner _monkeyWavesSpawner;
     [SerializeField] private AudioSource _throwSound;
 
     private bool _isAttacking = false;
     private float _attackDelayTime = 0.5f;
 
     public event UnityAction Attacked;
+
+    private void OnEnable()
+    {
+        _monkeyWavesSpawner.WavesStarted += OnWavesStarted;
+    }
 
     public void OnThrowAttack()
     {
@@ -28,16 +33,11 @@ public class PlayerThrowAttackController : MonoBehaviour
         }
     }
 
-    private void OnEnable()
-    {
-        _shooterWavesController.WavesStarted += OnWavesStarted;
-    }
-
     private void OnWavesStarted()
     {
         _playerProjectilesPool.gameObject.SetActive(true);
 
-        _shooterWavesController.WavesFinished += OnWavesFinished;
+        _monkeyWavesSpawner.WavesFinished += OnWavesFinished;
     }
 
     private void OnWavesFinished()
@@ -45,8 +45,8 @@ public class PlayerThrowAttackController : MonoBehaviour
         if (_playerProjectilesPool != null)
             _playerProjectilesPool.gameObject.SetActive(false);
 
-        _shooterWavesController.WavesStarted -= OnWavesStarted;
-        _shooterWavesController.WavesFinished -= OnWavesFinished;
+        _monkeyWavesSpawner.WavesStarted -= OnWavesStarted;
+        _monkeyWavesSpawner.WavesFinished -= OnWavesFinished;
 
         ThirdPersonController.Instance.DisableShooting();
     }

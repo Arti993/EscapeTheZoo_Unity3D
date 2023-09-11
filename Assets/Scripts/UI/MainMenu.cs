@@ -9,6 +9,16 @@ public class MainMenu : MonoBehaviour
 
     private int _gameSceneNumber = 1;
 
+    private void OnEnable()
+    {
+        Cursor.lockState = CursorLockMode.None;
+    }
+
+    private void OnDisable()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+
     public void LoadGameScene()
     {
         SceneManager.LoadScene(_gameSceneNumber);
@@ -44,15 +54,5 @@ public class MainMenu : MonoBehaviour
     public void ExitGame()
     {
         Application.Quit();
-    }
-
-    private void OnEnable()
-    {
-        Cursor.lockState = CursorLockMode.None;
-    }
-
-    private void OnDisable()
-    {
-        Cursor.lockState = CursorLockMode.Locked;
     }
 }

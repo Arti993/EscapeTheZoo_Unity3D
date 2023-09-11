@@ -13,6 +13,11 @@ public class BananaObjectPool : ObjectPool
     private Coroutine _currentCoroutine;
     private Coroutine _firstPauseCoroutine;
 
+    private void Start()
+    {
+        Initialize(_bananaTemplate);
+    }
+
     public bool TryGetBanana()
     {
         bool isSuccesfull = false;
@@ -39,11 +44,6 @@ public class BananaObjectPool : ObjectPool
     {
         _isFirstPauseCompleted = false;
         _firstPauseCoroutine = null;
-    }
-
-    private void Start()
-    {
-        Initialize(_bananaTemplate);
     }
 
     private void SetBanana(GameObject banana)

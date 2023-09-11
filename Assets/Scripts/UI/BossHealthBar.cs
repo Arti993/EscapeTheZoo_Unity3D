@@ -4,6 +4,14 @@ public class BossHealthBar : Bar
 {
     private Monkey _boss;
 
+    private void OnDisable()
+    {
+        if (_boss != null)
+        {
+            _boss.HealthChanged -= OnValueChanged;
+        }
+    }
+
     public void BindToBoss(Monkey monkeyKing)
     {
         _boss = monkeyKing;
@@ -13,14 +21,6 @@ public class BossHealthBar : Bar
         _boss.HealthChanged += OnValueChanged;
 
         Player.Instance.Dying += OnPlayerDying;
-    }
-
-    private void OnDisable()
-    {
-        if(_boss != null)
-        {
-            _boss.HealthChanged -= OnValueChanged;
-        }
     }
 
     private void OnPlayerDying()

@@ -9,6 +9,11 @@ public class ObjectPool : MonoBehaviour
 
     private List<GameObject> _pool = new List<GameObject>();
 
+    private void OnDisable()
+    {
+        _pool.Clear();
+    }
+
     protected void Initialize(GameObject[] prefabs)
     {
         for (int i = 0; i < _capacity; i++)
@@ -36,10 +41,5 @@ public class ObjectPool : MonoBehaviour
         result = _pool.FirstOrDefault(element => element.activeSelf == false);
 
         return result != null;
-    }
-
-    private void OnDisable()
-    {
-        _pool.Clear();
     }
 }

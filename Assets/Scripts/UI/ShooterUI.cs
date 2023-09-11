@@ -9,11 +9,11 @@ public class ShooterUI : MonoBehaviour
     [SerializeField] private PlayerHealthBar _playerHealthbar;
     [SerializeField] private Button _shootButton;
     [SerializeField] private TMP_Text _nextWaveText;
-    [SerializeField] private ShooterWavesController _shooterController;
+    [SerializeField] private MonkeyWavesSpawner _monkeyWavesSpawner;
 
     private void OnEnable()
     {
-        _shooterController.WavesStarted += OnWavesStarted;
+        _monkeyWavesSpawner.WavesStarted += OnWavesStarted;
     }
 
     private void OnWavesStarted()
@@ -21,9 +21,9 @@ public class ShooterUI : MonoBehaviour
         EnablePlayerHealthBar();
         EnableShootButton();
 
-        _shooterController.CurrentWaveFinished += OnCurrentWaveFinished;
-        _shooterController.BossSpawned += OnBossSpawned;
-        _shooterController.WavesFinished += OnWavesFinished;
+        _monkeyWavesSpawner.CurrentWaveFinished += OnCurrentWaveFinished;
+        _monkeyWavesSpawner.BossSpawned += OnBossSpawned;
+        _monkeyWavesSpawner.WavesFinished += OnWavesFinished;
     }
 
     private void OnCurrentWaveFinished(float duration)
@@ -35,7 +35,7 @@ public class ShooterUI : MonoBehaviour
     {
         EnableBossHealthBar(monkey);
         
-        _shooterController.BossDefeated += OnBossDefeated;
+        _monkeyWavesSpawner.BossDefeated += OnBossDefeated;
     }
 
     private void OnBossDefeated()
@@ -48,10 +48,10 @@ public class ShooterUI : MonoBehaviour
         DisablePlayerHealthBar();
         DisableShootButton();
 
-        _shooterController.WavesStarted -= OnWavesStarted;
-        _shooterController.BossSpawned -= OnBossSpawned;
-        _shooterController.BossDefeated -= OnBossDefeated;
-        _shooterController.WavesFinished -= OnWavesFinished;
+        _monkeyWavesSpawner.WavesStarted -= OnWavesStarted;
+        _monkeyWavesSpawner.BossSpawned -= OnBossSpawned;
+        _monkeyWavesSpawner.BossDefeated -= OnBossDefeated;
+        _monkeyWavesSpawner.WavesFinished -= OnWavesFinished;
     }
 
     private void EnablePlayerHealthBar()

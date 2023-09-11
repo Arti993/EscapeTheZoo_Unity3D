@@ -19,6 +19,18 @@ public class Level : MonoBehaviour
     public event Action Passed;
     public event Action Restarted;
 
+    private void OnEnable()
+    {
+        ExitLevelGates.DoorsClosed += OnDoorsClosed;
+        ExitGatesDoorlock.IsOpened += OnLevelPassed;
+    }
+
+    private void OnDisable()
+    {
+        ExitLevelGates.DoorsClosed -= OnDoorsClosed;
+        ExitGatesDoorlock.IsOpened -= OnLevelPassed;
+    }
+
     public void StartPlayMusic()
     {
         if (MusicTheme.isPlaying == false)
@@ -47,18 +59,6 @@ public class Level : MonoBehaviour
     protected virtual void OnDoorsClosed()
     {
         AllActionsFinished?.Invoke();
-    }
-
-    private void OnEnable()
-    {
-        ExitLevelGates.DoorsClosed += OnDoorsClosed;
-        ExitGatesDoorlock.IsOpened += OnLevelPassed;
-    }
-
-    private void OnDisable()
-    {
-        ExitLevelGates.DoorsClosed -= OnDoorsClosed;
-        ExitGatesDoorlock.IsOpened -= OnLevelPassed;
     }
 
     private IEnumerator WaitDelayAndRestart(float duration)

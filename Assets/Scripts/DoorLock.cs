@@ -14,15 +14,9 @@ public class DoorLock : MonoBehaviour
         Player.Instance.KeyIsTaken += OnKeyTaken;
     }
 
-    private void OnKeyTaken()
-    {
-        _glow.SetActive(true);
-        Player.Instance.KeyIsTaken -= OnKeyTaken;
-    }
-
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.TryGetComponent(out Player player))
+        if (other.gameObject.TryGetComponent(out Player player))
         {
             if (player.IsKeyReceived)
             {
@@ -33,5 +27,11 @@ public class DoorLock : MonoBehaviour
                 Destroy(gameObject);
             }
         }
+    }
+
+    private void OnKeyTaken()
+    {
+        _glow.SetActive(true);
+        Player.Instance.KeyIsTaken -= OnKeyTaken;
     }
 }

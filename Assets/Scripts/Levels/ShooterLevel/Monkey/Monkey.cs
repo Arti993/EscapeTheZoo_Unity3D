@@ -10,14 +10,6 @@ public class Monkey : Entity
 
     public event Action<Monkey> Dying;
 
-    public override void TakeDamage(float damage)
-    {
-        base.TakeDamage(damage);
-
-        if (CurrentHealth <= 0)
-            StartCoroutine(Die());
-    }
-
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.TryGetComponent(out BambooStick bambooStick))
@@ -25,6 +17,14 @@ public class Monkey : Entity
             if (CurrentHealth > 0)
                 TakeDamage(bambooStick.Damage);
         }
+    }
+
+    public override void TakeDamage(float damage)
+    {
+        base.TakeDamage(damage);
+
+        if (CurrentHealth <= 0)
+            StartCoroutine(Die());
     }
 
     private IEnumerator Die()
